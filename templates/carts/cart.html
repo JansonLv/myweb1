@@ -11,11 +11,14 @@
             $('.cart_list_td').each(function () {
 {#                获取每个商品个数#}
                 nums = parseInt($(this).find('.num_show').val());
+{#                获取每个商品的总价#}
                 money = parseFloat($(this).find('.col07').html());
                 total_nums += nums;
                 total_money += money;
             });
+{#            更改总价格#}
             $('.settlements .col03').find('em').html(total_money.toFixed(2));
+{#            更改总数量#}
             $('.settlements .col03').find('b').html(total_nums);
         }
 
@@ -28,7 +31,7 @@
             single_nums = parseInt(obj.parents('.cart_list_td').find('.num_show').val());
 {#            计算商品总价格#}
             goods_money = single_money*single_nums;
-
+{#            更改每个商品的总价格#}
             obj.parents('.cart_list_td').find('.col07').html(goods_money.toFixed(2) + '元');
 
             update_total_info();
