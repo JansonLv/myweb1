@@ -61,8 +61,6 @@ def add_goods(request):
 def edit_goods_num(request):
     goods_id = get_getvalue(request, 'goods_id')
     goods_amount = get_getvalue(request, 'goods_amount')
-    print(goods_id)
-    print(goods_amount)
     try:
         goods = Cart.objects.get(cart_goods_id=goods_id, cart_user_id=get_session(request, 'uid'))
 
