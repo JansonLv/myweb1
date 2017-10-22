@@ -5,65 +5,98 @@
 {% block head_js  %}
     <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
     <script>
-        function update_total_info() {
-            total_nums = 0;
-            total_money = 0;
-            $('.cart_list_td').each(function () {
-{#                获取每个商品个数#}
-                nums = parseInt($(this).find('.num_show').val());
-{#                获取每个商品的总价#}
-                money = parseFloat($(this).find('.col07').html());
-                total_nums += nums;
-                total_money += money;
-            });
-{#            更改总价格#}
-            $('.settlements .col03').find('em').html(total_money.toFixed(2));
-{#            更改总数量#}
-            $('.settlements .col03').find('b').html(total_nums);
-        }
-
-
-{#        更新单个商品信息#}
-        function update_goods_info(obj) {
-{#            获取商品单价#}
-            single_money = parseFloat(obj.parents('.cart_list_td').find('.col05').html());
-{#            获取商品数量#}
-            single_nums = parseInt(obj.parents('.cart_list_td').find('.num_show').val());
-{#            计算商品总价格#}
-            goods_money = single_money*single_nums;
-{#            更改每个商品的总价格#}
-            obj.parents('.cart_list_td').find('.col07').html(goods_money.toFixed(2) + '元');
-
-            update_total_info();
-        }
-
-
         $(function () {
-            $('.add').click(function () {
-{#                获取数量#}
-                single_num = parseInt($(this).parents('.cart_list_td').find('.num_show').val());
-                single_num++;
-{#                更新商品数量#}
-                $(this).parents('.cart_list_td').find('.num_show').val(single_num);
-{#                更新单个商品信息#}
-                update_goods_info($(this));
-            });
-        });
-        $(function () {
-            $('.minus').click(function () {
-{#                获取数量#}
-                single_num = parseInt($(this).parents('.cart_list_td').find('.num_show').val());
-                single_num--;
+            {# 更新总统计信息 #}
+            function update_total_info() {
+                total_nums = 0;
+                total_money = 0;
+                {# 遍历每件商品 #}
+                $('.cart_list_td').each(function () {
+                    {# 判断每商品是否被选择,选择就统计价格 #}
+                    if($(this).find('input:checkbox').prop('checked')) {
+                        {# 获取每个商品个数#}
+                        nums = parseInt($(this).find('.num_show').val());
+                        {# 获取每个商品的总价#}
+                        money = parseFloat($(this).find('.col07').html());
+                        total_nums += nums;
+                        total_money += money;
+                    }
+                });
+                {# 更改总价格#}
+                $('.settlements .col03').find('em').html(total_money.toFixed(2));
+                {# 更改总数量#}
+                $('.settlements .col03').find('b').html(total_nums);
+            }
 
-                if(single_num <= 0) single_num=1;
-{#                更新商品数量#}
-                $(this).parents('.cart_list_td').find('.num_show').val(single_num)
-{#                更新单个商品信息#}
-                update_goods_info($(this));
+
+            {# 更新单个商品信息 #}
+            function update_goods_info(obj) {
+                {# 获取商品单价#}
+                single_money = parseFloat(obj.parents('.cart_list_td').find('.col05').html());
+                {# 获取商品数量#}
+                single_nums = parseInt(obj.parents('.cart_list_td').find('.num_show').val());
+                {# 计算商品总价格#}
+                goods_money = single_money*single_nums;
+                {# 更改每个商品的总价格#}
+                obj.parents('.cart_list_td').find('.col07').html(goods_money.toFixed(2) + '元');
+
+                update_total_info();
+            }
+
+
+            $(function () {
+                $('.add').click(function () {
+                    {# 获取数量#}
+                    single_num = parseInt($(this).parents('.cart_list_td').find('.num_show').val());
+                    single_num++;
+                    {# 更新商品数量#}
+                    $(this).parents('.cart_list_td').find('.num_show').val(single_num);
+
+                    {# 更新单个商品信息 #}
+                    update_goods_info($(this));
+                });
+            });
+            $(function () {
+                $('.minus').click(function () {
+                    {# 获取数量 #}
+                    single_num = parseInt($(this).parents('.cart_list_td').find('.num_show').val());
+                    single_num--;
+
+                    if(single_num <= 0) single_num=1;
+                    {# 更新商品数量 #}
+                    $(this).parents('.cart_list_td').find('.num_show').val(single_num);
+
+                    {# 更新单个商品信息 #}
+                    update_goods_info($(this));
+                })
+            });
+            {# 更新单个商品信息 #}
+            $(function () {
+               $('.num_show').change(function () {
+                   {# 更新单个商品信息 #}
+                    update_goods_info($(this));
+               })
+            });
+            {# 当勾选框改变了 #}
+            $(function () {
+                $('.cart_list_td').find('input:checkbox').change(function () {
+                    update_total_info()
+                })
+            });
+
+            {# 全选 #}
+            $('.settlements input:checkbox').click(function () {
+                {# 勾选全选 #}
+                if($(this).prop('checked')) $('.cart_list_td input:checkbox').prop('checked', true);
+                {# 未勾选全选 #}
+                else $('.cart_list_td input:checkbox').prop('checked', false);
+                {# 更新信息 #}
+                update_total_info()
             })
-        })
-
+        });
     </script>
+
+
 {% endblock head_js %}
 
 {% block body %}
@@ -89,40 +122,25 @@
 		<li class="col05">小计</li>
 		<li class="col06">操作</li>
 	</ul>
-{#	<ul class="cart_list_td clearfix">#}
-{#		<li class="col01"><input type="checkbox" name="" checked></li>#}
-{#		<li class="col02"><img src="{% static "images/goods/goods012.jpg" %}"></li>#}
-{#		<li class="col03">奇异果<br><em>25.80元/500g</em></li>#}
-{#		<li class="col04">500g</li>#}
-{#		<li class="col05">25.80元</li>#}
-{#		<li class="col06">#}
-{#			<div class="num_add">#}
-{#				<a href="javascript:;" class="add fl">+</a>#}
-{#				<input type="text" class="num_show fl" value="1">	#}
-{#				<a href="javascript:;" class="minus fl">-</a>	#}
-{#			</div>#}
-{#		</li>#}
-{#		<li class="col07">25.80元</li>#}
-{#		<li class="col08"><a href="javascript:;">删除</a></li>#}
-{#	</ul>#}
+
     {% for cart in carts %}
-	<ul class="cart_list_td clearfix">
-		<li class="col01"><input type="checkbox" name="" checked></li>
-		<li class="col02"><img src="{% static cart.cart_goods.good_image %}"></li>
-		<li class="col03">{{ cart.cart_goods.good_name }}<br><em>{{ cart.cart_goods.good_price }}元/{{ cart.cart_goods.good_unit }}</em></li>
-		<li class="col04">{{ cart.cart_goods.good_unit }}</li>
-		<li class="col05">{{ cart.cart_goods.good_price }}元</li>
-		<li class="col06">
-			<div class="num_add">
-				<a href="javascript:;" class="add fl">+</a>
-				<input type="text" class="num_show fl" value="{{ cart.cart_amount }}">
-				<a href="javascript:;" class="minus fl">-</a>	
-			</div>
-		</li>
-		<li class="col07">{{ cart.total_money }}元</li>
-		<li class="col08"><a href="javascript:;">删除</a></li>
-	</ul>
-	 {% endfor %}
+        <ul class="cart_list_td clearfix">
+            <li class="col01"><input type="checkbox" name="" checked></li>
+            <li class="col02"><img src="{% static cart.cart_goods.good_image %}"></li>
+            <li class="col03">{{ cart.cart_goods.good_name }}<br><em>{{ cart.cart_goods.good_price }}元/{{ cart.cart_goods.good_unit }}</em></li>
+            <li class="col04">{{ cart.cart_goods.good_unit }}</li>
+            <li class="col05">{{ cart.cart_goods.good_price }}元</li>
+            <li class="col06">
+                <div class="num_add">
+                    <a href="javascript:;" class="add fl">+</a>
+                    <input type="text" class="num_show fl" value="{{ cart.cart_amount }}">
+                    <a href="javascript:;" class="minus fl">-</a>
+                </div>
+            </li>
+            <li class="col07">{{ cart.total_money }}元</li>
+            <li class="col08"><a href="javascript:;">删除</a></li>
+        </ul>
+    {% endfor %}
 
 	<ul class="settlements">
 		<li class="col01"><input type="checkbox" name="" checked=""></li>
