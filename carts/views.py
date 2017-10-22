@@ -7,7 +7,21 @@ from django.http import JsonResponse
 
 
 # 购物车
+@check_permission #检查账户是否登录
 def cart(request):
+    # 取出购物车数据
+    carts = Cart.objects.filter(cart_user_id=get_session(request, 'uid'))
+    # 记录总数量和总价格
+    total_num = 0
+    total_money = 0
+    # 遍历购物车统计
+    for cart1 in carts:
+        money = cart1.cart_amount * cart1.cart_goods.good_price
+        total_money += money
+        total_num += cart1.cart_amount
+    # 加入carts中
+    carts.total_money = total_money
+    carts.total_num = total_num
 
     return render(request, 'carts/cart.html', locals())
 
