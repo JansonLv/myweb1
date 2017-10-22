@@ -56,3 +56,36 @@ def add_goods(request):
             total += good.cart_amount
 
     return JsonResponse({'total': total})
+
+
+def edit_goods_num(request):
+    goods_id = get_getvalue(request, 'goods_id')
+    goods_amount = get_getvalue(request, 'goods_amount')
+    print(goods_id)
+    print(goods_amount)
+    try:
+        goods = Cart.objects.get(cart_goods_id=goods_id, cart_user_id=get_session(request, 'uid'))
+
+        goods.cart_amount = int(goods_amount)
+        goods.save()
+
+    except Cart.DoesNotExist:
+        # 则添加这个数据
+        goods = Cart()
+        goods.cart_goods_id = goods_id
+        goods.cart_user_id = get_session(request, 'uid')
+        goods.cart_amount = goods_amount
+        goods.save()
+
+    return JsonResponse({'ret': 1})
+
+
+def del_goods(request):
+    goods_id = get_getvalue(request, 'goods_id')
+
+    try:
+        goods = Cart.objects.get(cart_goods_id=goods_id, cart_user_id=get_session(request, 'uid'))
+        goods.delete()
+    except:
+        pass
+    return JsonResponse({'ret': 1})

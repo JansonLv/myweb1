@@ -6,6 +6,27 @@
     <script src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
     <script>
         $(function () {
+            // 修改商品数量的ajax请求
+            function ajax_edit_num(obj) {
+                goods_id = $(obj).parents('.cart_list_td').find('.col01 input').val();
+                goods_amount = $(obj).parents('.cart_list_td').find('.num_show').val();
+
+                flog = false;
+                $.ajax({
+                    'url':'{% url 'carts:edit_goods_num' %}',
+                    'data':{'goods_id':goods_id, 'goods_amount':goods_amount},
+                    'type':'get',
+                    //是否为异步,
+                    'async':false,
+                    'success':function (data) {
+                        if(data.ret !=0) flog = true
+                    }
+                });
+                //更新统计信息
+                if (flog) update_total_info();
+            }
+
+
             {# 更新总统计信息 #}
             function update_total_info() {
                 total_nums = 0;
@@ -40,7 +61,10 @@
                 {# 更改每个商品的总价格#}
                 obj.parents('.cart_list_td').find('.col07').html(goods_money.toFixed(2) + '元');
 
-                update_total_info();
+                ajax_edit_num(obj);
+
+{#                //更新统计信息#}
+{#                update_total_info();#}
             }
 
 
@@ -54,6 +78,8 @@
 
                     {# 更新单个商品信息 #}
                     update_goods_info($(this));
+
+
                 });
             });
             $(function () {
@@ -70,7 +96,7 @@
                     update_goods_info($(this));
                 })
             });
-            {# 更新单个商品信息 #}
+            {# 直接更改商品数量,更新单个商品信息 #}
             $(function () {
                $('.num_show').change(function () {
                    {# 更新单个商品信息 #}
@@ -91,8 +117,36 @@
                 {# 未勾选全选 #}
                 else $('.cart_list_td input:checkbox').prop('checked', false);
                 {# 更新信息 #}
-                update_total_info()
-            })
+                update_total_info();
+            });
+
+            {# 删除按钮 #}
+            $('.col08 a').click(function () {
+
+                {# 确认删除商品 #}
+                if(confirm('确定删除本件商品吗?'))
+                    goods_id = $(this).parents('.cart_list_td').find('.col01 input').val();
+                    flog = false;
+                    $.ajax({
+                        'url':'{% url 'carts:del_goods' %}',
+                        'data':{'goods_id':goods_id},
+                        'type':'get',
+                        //是否为异步,
+                        'async':false,
+                        'success':function (data) {
+                            if(data.ret !=0) flog = true
+                        }
+                    });
+                    if (flog) {
+                        $(this).parents('.cart_list_td').remove();
+                        //更新统计信息
+                        update_total_info();
+                    }
+            });
+
+
+
+
         });
     </script>
 
@@ -125,7 +179,7 @@
 
     {% for cart in carts %}
         <ul class="cart_list_td clearfix">
-            <li class="col01"><input type="checkbox" name="" checked></li>
+            <li class="col01"><input value="{{ cart.cart_goods.id }}" type="checkbox" name="" checked></li>
             <li class="col02"><img src="{% static cart.cart_goods.good_image %}"></li>
             <li class="col03">{{ cart.cart_goods.good_name }}<br><em>{{ cart.cart_goods.good_price }}元/{{ cart.cart_goods.good_unit }}</em></li>
             <li class="col04">{{ cart.cart_goods.good_unit }}</li>
