@@ -4,8 +4,9 @@ from django.http import HttpResponse, JsonResponse
 from .functions import *
 from .models import *
 from goods.function import  *
+from order.models import *
 # Create your views here.
-
+from django.core.paginator import Paginator
 
 
 
@@ -38,6 +39,28 @@ def info(request):
 # 用户中心-订单中心
 @check_permission
 def order(request):
+    # 获取用户id
+    user_id = get_session(request, 'uid')
+    # 查询该用户全部订单信息,需要按时间逆序,最后的订单在前
+    orders = Order.objects.filter(order_user_id=user_id).order_by('-update_time')
+
+    # 设置一个分页面
+    paginator = Paginator(orders, 2)
+    # 获取当前页码
+    current_page = get_getvalue(request, 'page')
+    if not current_page:
+        current_page = 1
+    # 从当前页获取数据
+    orders = paginator.page(current_page)
+
+    # 查询订单
+    for order in orders:
+        # 绑定一个订单总价
+        order.total_money = 0
+        # 遍历订单中的商品,求出总价,在模板中直接使用order.goodsdetail_set.all
+        for goods in order.goodsdetail_set.all():
+            order.total_money += goods.detail_amount * goods.detail_price
+
     return render(request, 'users/user_center_order.html', locals())
 
 
