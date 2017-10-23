@@ -148,3 +148,4 @@ def info_edit(request):
         User.objects.user_addrInfo_save(request)
 
     return redirect(reverse('users:info'))
+
