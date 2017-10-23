@@ -41,8 +41,11 @@ def post_getvalue(request, key):
 def get_getvalue(request, key):
     return request.GET.get(key, "").strip()
 
+
+# 获取post传过来的list列表
 def post_getlist(request, key):
     return request.POST.getlist(key, "")
+
 
 # 增加消息到系统消息队列中,调用时利用spilt切割
 def add_message(request, key, mess):
