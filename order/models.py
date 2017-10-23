@@ -15,11 +15,12 @@ class GoodsDetail(AbstractModel):
     #　商品图片
     detail_image = models.ImageField()
     # 商品id
-    detail_goodsID = models.ImageField()
+    detail_goodsID = models.IntegerField()
+    # 所属订单
+    detail_order = models.ForeignKey('Order')
 
 # 订单信息模型
 class Order(AbstractModel):
-
     status = (
         (1, '待支付'),
         (2, '待发货'),
@@ -45,13 +46,12 @@ class Order(AbstractModel):
     # 运费
     order_fee = models.IntegerField(default=10)
     # 订单状态
-    order_status = models.SmallIntegerField(choices=status)
+    order_status = models.SmallIntegerField(choices=status, default=1)
     #　订单支付方式
-    order_pay = models.SmallIntegerField(choices=pay)
+    order_pay = models.SmallIntegerField(choices=pay, default=1)
     # 订单所属用户
     order_user = models.ForeignKey('users.User')
-    # 订单商品列表
-    order_goodsList = models.ForeignKey('GoodsDetail')
+
 
 
 
