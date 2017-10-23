@@ -9,8 +9,6 @@ from order.models import *
 from django.core.paginator import Paginator
 
 
-
-
 def login(request):
     # 判断是否记录账号
     if get_cookies(request, 'memb_acount'):
