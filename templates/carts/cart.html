@@ -125,6 +125,7 @@
 
                 {# 确认删除商品 #}
                 if(confirm('确定删除本件商品吗?'))
+                    // 获取商品id
                     goods_id = $(this).parents('.cart_list_td').find('.col01 input').val();
                     flog = false;
                     $.ajax({
@@ -137,15 +138,34 @@
                             if(data.ret !=0) flog = true
                         }
                     });
+                    // 确认删除后
                     if (flog) {
+                        // 删除商品js
                         $(this).parents('.cart_list_td').remove();
                         //更新统计信息
                         update_total_info();
                     }
             });
 
+            // 结算按钮
             $('.settlements .col04 a').click(function () {
-                $('.order').submit()
+                // 默认没有商品被选中
+                flog = true;
+                // 遍历商品
+                $('.cart_list_td input').each(function () {
+                    // 判断商品是否选中
+                    if($(this).prop('checked')){
+                        // 提交表单
+                        $('.order').submit();
+                        // 当有商品被选中,则使flog为0
+                        flog = false;
+                        // 相当于break,跳出本次循环
+                        return false
+                    }
+
+                });
+                // 没有商品被选中则执行
+                if(flog) alert('你还未选中商品');
             })
 
 
