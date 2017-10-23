@@ -1,8 +1,57 @@
 from django.db import models
+from db.AbstractModel import AbstractModel
 
 # Create your models here.
+# 订单详细信息表
+class GoodsDetail(AbstractModel):
+    # 商品名称
+    detail_name = models.CharField(max_length=50)
+    # 商品价格
+    detail_price = models.IntegerField()
+    # 商品数量
+    detail_amount = models.IntegerField()
+    # 商品单位
+    detail_unit = models.CharField(max_length=10)
+    #　商品图片
+    detail_image = models.ImageField()
+    # 商品id
+    detail_goodsID = models.ImageField()
 
+# 订单信息模型
+class Order(AbstractModel):
 
+    status = (
+        (1, '待支付'),
+        (2, '待发货'),
+        (3, '待收货'),
+        (4, '已完成'),
+    )
+
+    pay = (
+        (1, '货到付款'),
+        (2, '微信支付'),
+        (3, '支付宝支付'),
+        (4, '银联支付'),
+    )
+
+    # 订单编号
+    order_num = models.CharField(max_length=50)
+    # 订单收货地址
+    order_addr = models.CharField(max_length=50)
+    # 收件人姓名
+    order_recName = models.CharField(max_length=20)
+    # 收件人号码
+    order_tele = models.CharField(max_length=12)
+    # 运费
+    order_fee = models.IntegerField(default=10)
+    # 订单状态
+    order_status = models.SmallIntegerField(choices=status)
+    #　订单支付方式
+    order_pay = models.SmallIntegerField(choices=pay)
+    # 订单所属用户
+    order_user = models.ForeignKey('users.User')
+    # 订单商品列表
+    order_goodsList = models.ForeignKey('GoodsDetail')
 
 
 
