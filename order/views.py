@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from utils.wrappers import post_getlist, get_session
 from carts.models import *
+from users.models import User
 # Create your views here.
 
 
@@ -27,8 +28,8 @@ def order(request):
         cart_goods.total_num = total_num
         cart_goods.total_money = total_money
 
-        print(goods.cart_goods.good_name, '总价', goods.single_total_money)
-        print('总数', cart_goods.total_num)
-        print('总价格', cart_goods.total_money)
+        cart_goods.total_money_and_freight = cart_goods.total_money + 10
+
+        user = User.objects.get(id=get_session(request, 'uid'))
 
     return render(request, 'order/place_order.html', locals())
