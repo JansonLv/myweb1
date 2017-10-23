@@ -20,9 +20,10 @@
 	<div class="common_list_con clearfix">
 		<dl>
 			<dt>寄送到：</dt>
-			<dd><input type="radio" name="" checked="">北京市 海淀区 东北旺西路8号中关村软件园 （李思 收） 182****7528</dd>
+			<dd><input type="radio" name="" checked="">{{ user.user_recv }} （{{ user.user_name }} 收） {{ user.user_tele }}</dd>
 		</dl>
-		<a href="../users/user_center_site.html" class="edit_site">编辑收货地址</a>
+        {# target的作用就是如何打开一个新的连接,该连接为新标签中打开 #}
+		<a target="_blank" href="{% url 'users:site' %}" class="edit_site">编辑收货地址</a>
 
 	</div>
 	
@@ -53,13 +54,13 @@
 
         {% for goods in cart_goods %}
 		<ul class="goods_list_td clearfix">
-			<li class="col01">1</li>			
-			<li class="col02"><img src="{% static "images/goods/goods012.jpg" %}"></li>
-			<li class="col03">奇异果</li>
-			<li class="col04">500g</li>
-			<li class="col05">25.80元</li>
-			<li class="col06">1</li>
-			<li class="col07">25.80元</li>	
+			<li class="col01">{{ forloop.counter }}</li>
+			<li class="col02"><img src="{% static goods.cart_goods.good_image %}"></li>
+			<li class="col03">{{ goods.cart_goods.good_name }}</li>
+			<li class="col04">{{ goods.cart_goods.good_unit }}</li>
+			<li class="col05">{{ goods.cart_goods.good_price }}元</li>
+			<li class="col06">{{ goods.cart_amount }}</li>
+			<li class="col07">{{ goods.single_total_money }}元</li>
 		</ul>
         {% endfor %}
 
@@ -70,9 +71,9 @@
 
 	<div class="common_list_con clearfix">
 		<div class="settle_con">
-			<div class="total_goods_count">共<em>2</em>件商品，总金额<b>42.60元</b></div>
+			<div class="total_goods_count">共<em>{{ cart_goods.total_num }}</em>件商品，总金额<b>{{ cart_goods.total_money }}元</b></div>
 			<div class="transit">运费：<b>10元</b></div>
-			<div class="total_pay">实付款：<b>52.60元</b></div>
+			<div class="total_pay">实付款：<b>{{ cart_goods.total_money_and_freight }}元</b></div>
 		</div>
 	</div>
 
