@@ -59,31 +59,38 @@ def add_goods(request):
 
 
 def edit_goods_num(request):
+    # 获取商品id
     goods_id = get_getvalue(request, 'goods_id')
+    # 获取商品数量
     goods_amount = get_getvalue(request, 'goods_amount')
     try:
+        # 根据商品id和商品数量查询商品
         goods = Cart.objects.get(cart_goods_id=goods_id, cart_user_id=get_session(request, 'uid'))
-
+        # 商品存在,更改商品数量------->必须加商品id
         goods.cart_amount = int(goods_amount)
         goods.save()
 
     except Cart.DoesNotExist:
-        # 则添加这个数据
+        # 商品不存在,则添加这个商品
         goods = Cart()
         goods.cart_goods_id = goods_id
         goods.cart_user_id = get_session(request, 'uid')
         goods.cart_amount = goods_amount
         goods.save()
-
+    # 返回json数据
     return JsonResponse({'ret': 1})
 
-
+# 删除商品
 def del_goods(request):
+    # 获取商品id
     goods_id = get_getvalue(request, 'goods_id')
-
+    # 删除商品
     try:
+        # 商品存在则删除
         goods = Cart.objects.get(cart_goods_id=goods_id, cart_user_id=get_session(request, 'uid'))
         goods.delete()
     except:
+        # 不存在则跳过
         pass
+    # 返回商品信息
     return JsonResponse({'ret': 1})
