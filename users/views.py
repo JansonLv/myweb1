@@ -149,3 +149,4 @@ def info_edit(request):
 
     return redirect(reverse('users:info'))
 
+
