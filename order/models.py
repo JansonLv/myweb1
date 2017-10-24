@@ -12,12 +12,13 @@ class GoodsDetail(AbstractModel):
     detail_amount = models.IntegerField()
     # 商品单位
     detail_unit = models.CharField(max_length=10)
-    #　商品图片
+    # 商品图片
     detail_image = models.ImageField()
     # 商品id
     detail_goodsID = models.IntegerField()
     # 所属订单
     detail_order = models.ForeignKey('Order')
+
 
 # 订单信息模型
 class Order(AbstractModel):
