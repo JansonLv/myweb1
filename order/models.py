@@ -56,12 +56,6 @@ class Order(AbstractModel):
 
 
 
-
-
-
-
-
-
 '''
 # 自定义管理器模式
 class 自定义管理器类名(models.Manager):
